@@ -6,6 +6,7 @@ public class CustomerObjectTestUnit {
         Object o = new Object();
         System.out.println(">>>>>>>>>>>");
         System.out.println(o.toString());
+        System.out.println(o.getClass().getClassLoader());
     }
 
 }
