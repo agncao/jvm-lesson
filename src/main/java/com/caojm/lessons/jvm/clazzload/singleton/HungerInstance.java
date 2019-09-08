@@ -1,11 +1,14 @@
 package com.caojm.lessons.jvm.clazzload.singleton;
 
+import java.util.UUID;
+
 /**
  * StaticInt什么时候会给默认值
  */
 public class HungerInstance {
-    public static int StaticInt;
-    public static final int ConstantInt=0;
+    public static String StaticHello=HungerInstance.ConstHello;
+    public static final String ConstHello="Hello!";
+    public static final String UId= UUID.randomUUID().toString();
 
     private static HungerInstance instance = new HungerInstance();
 
