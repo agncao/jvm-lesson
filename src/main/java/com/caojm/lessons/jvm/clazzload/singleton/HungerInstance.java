@@ -2,14 +2,16 @@ package com.caojm.lessons.jvm.clazzload.singleton;
 
 import java.util.UUID;
 
-/**
- * StaticInt什么时候会给默认值
- */
+
+
 public class HungerInstance {
     public static String StaticHello=HungerInstance.ConstHello;
+
     public static final String ConstHello="Hello!";
+
     public static final String UId= UUID.randomUUID().toString();
 
+    //只要类初始化了就会生成对象
     private static HungerInstance instance = new HungerInstance();
 
     private HungerInstance(){

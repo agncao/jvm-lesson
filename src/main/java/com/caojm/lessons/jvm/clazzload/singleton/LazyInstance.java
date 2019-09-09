@@ -1,9 +1,16 @@
 package com.caojm.lessons.jvm.clazzload.singleton;
 
-public class LazyInstance extends Object {
+public class LazyInstance{
+
+    /**
+     * 只有初始化了此内部类才会触发LazyInstance 单例对象的生成
+     */
     private static class LazyHolder{
-    private static final LazyInstance instance=new LazyInstance();
-}
+        static {
+            System.out.println("LazyHolder Class will be initial, and a singleton LazyInstance object will be constructed!");
+        }
+        private static final LazyInstance instance=new LazyInstance();
+    }
 
     private LazyInstance(){
         System.out.println("Aha~ New instance have been ready for you!");
@@ -17,7 +24,7 @@ public class LazyInstance extends Object {
     }
 
     public static void main(String[] args) {
-        getInstance(true);  //1、是否会生成singleton instance?
+//        getInstance(true);  //1、是否会生成singleton instance?
         getInstance(false); //2、是否会生成singleton instance?
     }
 }
