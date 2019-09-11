@@ -8,4 +8,8 @@ package com.caojm.lessons.jvm.methodstack.dynamiclink;
  **/
 public abstract class Animal {
     public abstract void run();
+
+    public void eat(){
+        System.out.println("All the animals needs to eat");
+    }
 }

@@ -12,7 +12,13 @@ public class Dog extends Animal {
         System.out.println("dog running");
     }
 
-    public static void getViceProfSalary(){
-        System.out.println("return Vice Professor's salary");
+
+    @Override
+    public void eat(){
+        System.out.println("dogs eat too much");
+    }
+
+    public static void wang(){
+        System.out.println("wang~ wang~ wang~");
     }
 }
