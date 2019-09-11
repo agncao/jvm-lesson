@@ -9,13 +9,13 @@ package com.caojm.lessons.jvm.methodstack.dynamiclink;
 public class DynamicLinkTestUnit {
 
     public static void main(String[] args) {
-        Professor.getViceProfSalary();
+        Dog.getViceProfSalary();
 
-        Employee itEngineer = new ITEngineer();
-        itEngineer.getSalary();
+        Animal cat = new Cat();
+        cat.run();
 
-        Employee professor = new Professor();
-        professor.getSalary();
+        Animal dog = new Dog();
+        dog.run();
 
     }
 }

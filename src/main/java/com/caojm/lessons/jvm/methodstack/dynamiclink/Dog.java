@@ -6,10 +6,10 @@ package com.caojm.lessons.jvm.methodstack.dynamiclink;
  * @author <a href=mailto:caojianmin@jd.com>caojianmin1</a>
  * @create 2019-09-09 上午11:43
  **/
-public class Professor extends Employee {
+public class Dog extends Animal {
     @Override
-    public void getSalary() {
-        System.out.println("return Professor salary");
+    public void run() {
+        System.out.println("dog running");
     }
 
     public static void getViceProfSalary(){
