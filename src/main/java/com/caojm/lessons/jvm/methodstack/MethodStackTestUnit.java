@@ -7,9 +7,12 @@ package com.caojm.lessons.jvm.methodstack;
  * @create 2019-09-08 下午5:15
  **/
 public class MethodStackTestUnit {
+    private static final int ConstInt = 532;
     private int val=3;
     public int increaseStep(int step){
-        return val+step;
+        int a = 1;
+        int c= (val+1)*step;
+        return c;
     }
 
     public static void main(String[] args) {
