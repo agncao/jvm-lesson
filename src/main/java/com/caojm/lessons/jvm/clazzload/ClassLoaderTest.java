@@ -14,6 +14,7 @@ import java.io.InputStream;
  **/
 public class ClassLoaderTest {
     public static void main(String[] args)throws Exception{
+        System.out.println(">>>>>>>>>>>>>>>");
         ClassLoader myClassLoader=new ClassLoader() {
             @Override
             public Class<?> loadClass(String name) throws ClassNotFoundException{
@@ -31,11 +32,7 @@ public class ClassLoaderTest {
             }
         };
         Object object = myClassLoader.loadClass("com.caojm.lessons.jvm.clazzload.ClassLoaderTest").newInstance();
-        System.out.println(object.getClass());
-        if(object instanceof Cat){
-            System.out.println("com.caojm.lessons.jvm.clazzload.ClassLoaderTest object");
-        }else {
-            System.out.println("NOT com.caojm.lessons.jvm.clazzload.ClassLoaderTest object");
-        }
+        System.out.println("此object的类名全称是:"+object.getClass()+",加载器："+object.getClass().getClassLoader().toString());
+        System.out.println(object instanceof Cat);
     }
 }
