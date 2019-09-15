@@ -11,7 +11,7 @@ public class MethodStackTestUnit {
     private int val=3;
     public int increaseStep(int step){
         int a = 1;
-        int c= (val+1)*step;
+        int c= (val+a)*step;
         return c;
     }
 
