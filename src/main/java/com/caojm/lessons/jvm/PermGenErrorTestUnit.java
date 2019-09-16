@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ${DESCRIPTION}
+ * 元空间默认直接使用内存区域，当然也可以用参数来设置元空间的大小
+ * 类的静态变量从原来的永久区挪到堆区
  *
  * @author <a href=mailto:caojianmin@jd.com>caojianmin1</a>
  * @create 2019-09-16 上午11:11
