@@ -9,8 +9,6 @@ package com.caojm.lessons.jvm.methodstack.dynamiclink;
 public class DynamicLinkTestUnit {
 
     public static void main(String[] args) {
-        Dog.wang();
-
         Animal cat = new Cat();
         cat.run();
 
@@ -22,10 +20,5 @@ public class DynamicLinkTestUnit {
 
         Dog dog1 =new Dog();
         dog1.run();
-
-        Animal himalayan = new HimalayanCat();
-        himalayan.run();
-        himalayan.eat();
-
     }
 }

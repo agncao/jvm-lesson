@@ -9,7 +9,7 @@ package com.caojm.lessons.jvm.methodstack.dynamiclink;
 public class Dog extends Animal {
     @Override
     public void run() {
-        System.out.println("dog running");
+        System.out.println("dogs running");
     }
 
 
@@ -18,7 +18,7 @@ public class Dog extends Animal {
         System.out.println("dogs eat too much");
     }
 
-    public static void wang(){
+    public static void sayHello(){
         System.out.println("wang~ wang~ wang~");
     }
 }

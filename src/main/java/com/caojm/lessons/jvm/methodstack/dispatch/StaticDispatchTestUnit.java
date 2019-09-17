@@ -7,7 +7,7 @@ package com.caojm.lessons.jvm.methodstack.dispatch;
  * @author <a href=mailto:caojianmin@jd.com>caojianmin1</a>
  * @create 2019-09-11 下午2:42
  **/
-public class DispatchTestUnit {
+public class StaticDispatchTestUnit {
     public void test(Grandpa object){
         System.out.println("Grandpa");
     }
@@ -19,7 +19,7 @@ public class DispatchTestUnit {
     }
 
     public static void main(String[] args) {
-        DispatchTestUnit testUnit = new DispatchTestUnit();
+        StaticDispatchTestUnit testUnit = new StaticDispatchTestUnit();
 
         Grandpa father = new Father();
         Grandpa son = new Son();

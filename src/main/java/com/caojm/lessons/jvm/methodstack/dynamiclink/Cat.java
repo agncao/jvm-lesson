@@ -9,6 +9,6 @@ package com.caojm.lessons.jvm.methodstack.dynamiclink;
 public class Cat extends Animal {
     @Override
     public void run() {
-        System.out.println("cat running");
+        System.out.println("cats running");
     }
 }
