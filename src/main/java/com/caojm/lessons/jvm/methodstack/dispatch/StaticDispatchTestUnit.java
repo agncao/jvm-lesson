@@ -27,6 +27,8 @@ public class StaticDispatchTestUnit {
         testUnit.test(father);
         testUnit.test(son);
 
+        testUnit.test(new Son());
+
     }
 }
 
