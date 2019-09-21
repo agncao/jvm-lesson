@@ -12,10 +12,6 @@ public class ClazzByteCodeTestUnit {
 
     private static final int Step = 3;
 
-    public int increase(){
-        return i++;
-    }
-
     public int increaseStep(){
         return  i+Step;
     }
