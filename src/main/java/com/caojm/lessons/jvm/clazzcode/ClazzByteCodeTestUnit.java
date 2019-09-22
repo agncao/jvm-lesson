@@ -7,13 +7,13 @@ package com.caojm.lessons.jvm.clazzcode;
  * @create 2019-09-08 下午5:15
  **/
 public class ClazzByteCodeTestUnit {
-    private int i;
-    private static String Hello= "Hello";
+    private int seed;
+    private static String Hello= "Hello";   //会放在常量池
 
     private static final int Step = 3;
 
     public int increaseStep(){
-        return  i+Step;
+        return  seed+Step;
     }
 
     public static void main(String[] args) {

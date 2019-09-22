@@ -18,13 +18,15 @@ public class LazyInstance{
 
     public static Object getInstance(boolean listFlag){
         if(listFlag){
-            return new LazyInstance[2];
+            LazyHolder[] lazyHolders = new LazyHolder[2];
+            System.out.println(lazyHolders.getClass()); //查看加载的是个什么类对象
+            return lazyHolders;
         }
         return LazyHolder.instance;
     }
 
     public static void main(String[] args) {
-//        getInstance(true);  //1、是否会生成singleton instance?
-        getInstance(false); //2、是否会生成singleton instance?
+        getInstance(true);  //1、是否会生成singleton instance?
+//        getInstance(false); //2、是否会生成singleton instance?
     }
 }
