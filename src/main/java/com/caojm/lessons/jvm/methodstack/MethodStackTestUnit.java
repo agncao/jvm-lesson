@@ -21,12 +21,12 @@ public class MethodStackTestUnit {
     public static void main(String[] args) {
         MethodStackTestUnit testUnit = new MethodStackTestUnit();
         System.out.println(testUnit.increaseStep(3));
-//        Thread t = new Thread(new Runnable() {
-//            public void run() {
-//                System.out.println("start to run");
-//            }
-//        });
-//        t.start();
+/*        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                Dog.sayHello();
+            }
+        });
+        thread.start();*/
 
     }
 
