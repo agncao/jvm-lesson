@@ -9,12 +9,6 @@ package com.caojm.lessons.jvm.clazzload;
  */
 public class ParentalAppointmentTestUnit {
     public static void main(String[] args) {
-        Object object = new Object();
-        System.out.println(">>>>>>>>>>>>");
-        System.out.println(object.getClass().getClassLoader());
-        System.out.println(ParentalAppointmentTestUnit.class.getClassLoader().getParent().getParent());
-        System.out.println(ParentalAppointmentTestUnit.class.getClassLoader().getParent());
-        System.out.println(ParentalAppointmentTestUnit.class.getClassLoader());
-        System.out.println("<<<<<<<<<<<<");
+
     }
 }
