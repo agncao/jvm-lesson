@@ -16,7 +16,7 @@ public class DynamicLinkTestUnit {
         Animal dog = new Dog();
         dog.run();
 
-        cat.eat();
+        cat.eat();  //调用父类的eat
         dog.eat();
 
         Dog dog1 =new Dog();
