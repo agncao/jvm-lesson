@@ -1,7 +1,9 @@
 package com.caojm.lessons.jvm.clazzload.singleton;
 
+
 public class LazyInstance{
 
+    static {System.out.println("LazyInstance class loaded");}
     /**
      * 只有初始化了此内部类才会触发LazyInstance 单例对象的生成
      */
@@ -24,6 +26,8 @@ public class LazyInstance{
         }
         return LazyHolder.instance;
     }
+
+    public static void run(){}
 
     public static void main(String[] args) {
         getInstance(true);  //1、是否会生成singleton instance?

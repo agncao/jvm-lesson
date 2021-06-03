@@ -12,9 +12,9 @@ public class HungerInstanceTestUnit {
         System.out.println(">>>>>>>>>>>>>");
 //        System.out.println(HungerInstance.ConstHello); //1、是否会生成singleton instance?
         System.out.println("HungerInstance classLoad start!");
-        System.out.println(HungerInstance.UId); //3、是否会生成singleton instance?
+//        System.out.println(HungerInstance.UId); //3、是否会生成singleton instance?
 //        System.out.println(HungerInstance.StaticHello); //4、是否会生成singleton instance?
-//        HungerInstance instance = HungerInstance.getInstance();   //5、
+        HungerInstance instance = HungerInstance.getInstance();   //5、
 
         //------6、测试反射是否会出发类初始化 start---->
 //        try {
