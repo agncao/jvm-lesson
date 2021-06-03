@@ -15,24 +15,24 @@ import java.io.InputStream;
 public class ClassLoaderTest {
     public static void main(String[] args)throws Exception{
         System.out.println(">>>>>>>>>>>>>>>");
-//        ClassLoader myClassLoader=new ClassLoader() {
-//            @Override
-//            public Class<?> loadClass(String name) throws ClassNotFoundException{
-//                String fileName=name.substring(name.lastIndexOf(".")+1)+".class";
-//                InputStream inputStream=getClass().getResourceAsStream(fileName);
-//                if(null==inputStream) {
-//                    return super.loadClass(name);
-//                }try {
-//                    byte[] bytes=new byte[inputStream.available()];
-//                    inputStream.read(bytes);
-//                    return defineClass(name,bytes,0,bytes.length);
-//                }catch (IOException e){
-//                    throw new ClassNotFoundException(name);
-//                }
-//            }
-//        };
-//        Object object = myClassLoader.loadClass("com.caojm.lessons.jvm.clazzload.ClassLoaderTest").newInstance();
-//        System.out.println("此object的类名全称是:"+object.getClass()+",加载器："+object.getClass().getClassLoader().toString());
-//        System.out.println(object instanceof Cat);
+        ClassLoader myClassLoader=new ClassLoader() {
+            @Override
+            public Class<?> loadClass(String name) throws ClassNotFoundException{
+                String fileName=name.substring(name.lastIndexOf(".")+1)+".class";
+                InputStream inputStream=getClass().getResourceAsStream(fileName);
+                if(null==inputStream) {
+                    return super.loadClass(name);
+                }try {
+                    byte[] bytes=new byte[inputStream.available()];
+                    inputStream.read(bytes);
+                    return defineClass(name,bytes,0,bytes.length);
+                }catch (IOException e){
+                    throw new ClassNotFoundException(name);
+                }
+            }
+        };
+        Object object = myClassLoader.loadClass("com.caojm.lessons.jvm.clazzload.ClassLoaderTest").newInstance();
+        System.out.println("此object的类名全称是:"+object.getClass()+",加载器："+object.getClass().getClassLoader().toString());
+        System.out.println(object instanceof Cat);
     }
 }
