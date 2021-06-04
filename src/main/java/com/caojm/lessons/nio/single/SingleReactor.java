@@ -36,8 +36,10 @@ class SingleReactor implements Runnable {
                 selector.select();
                 Set selected = selector.selectedKeys();
                 Iterator it = selected.iterator();
-                while (it.hasNext())
-                    dispatch((SelectionKey)it.next()); //dispatch分发事件
+                while (it.hasNext()) {
+                    dispatch((SelectionKey) it.next()); //dispatch分发事件
+//                    it.remove();
+                }
                 selected.clear();
             }
         } catch (IOException ex) {

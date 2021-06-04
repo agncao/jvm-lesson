@@ -12,48 +12,46 @@ import java.nio.channels.SocketChannel;
  * @date 2021/6/3 下午4:21
  */
 public class ReadWriteHandler implements Runnable {
-    final SocketChannel socket;
+    final SocketChannel socketChannel;
     final SelectionKey sk;
-    ByteBuffer input = ByteBuffer.allocate(1024);
-    ByteBuffer output = ByteBuffer.allocate(1024);
-    static final int READING = 0, SENDING = 1;
-    int state = READING;
+    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    static final int RECEIVE = 0, WRITING = 1;
+    int state = RECEIVE;
 
-    ReadWriteHandler(Selector sel, SocketChannel c) throws IOException {
-        socket = c;
-        c.configureBlocking(false);
+    ReadWriteHandler(Selector sel, SocketChannel channel) throws IOException {
+        socketChannel = channel;
+        channel.configureBlocking(false);
         // Optionally try first read now
-        sk = socket.register(sel, 0);
+        sk = socketChannel.register(sel, 0);
         sk.attach(this); //将Handler绑定到SelectionKey上
         sk.interestOps(SelectionKey.OP_READ);
         sel.wakeup();
     }
-    boolean inputIsComplete() { /* ... */
-        return true;
-    }
-    boolean outputIsComplete() { /* ... */
-        return true;
-    }
-    void process() { /* ... */ }
 
     public void run() {
         try {
-            if (state == READING) read();
-            else if (state == SENDING) send();
-        } catch (IOException ex) { /* ... */ }
-    }
+            if (state == RECEIVE){
+                int length=0;
+                while ((length=socketChannel.read(byteBuffer))>0) {
+                    System.out.println(Thread.currentThread().getName()+" received: "
+                            +new String(byteBuffer.array(),0,length)+",length="+length);
 
-    void read() throws IOException {
-        socket.read(input);
-        if (inputIsComplete()) {
-            process();
-            state = SENDING;
-            // Normally also do first write now
-            sk.interestOps(SelectionKey.OP_WRITE);
+                }
+                byteBuffer.flip();
+
+                state = WRITING;
+                // Normally also do first write now
+                sk.interestOps(SelectionKey.OP_WRITE);
+            }else if (state == WRITING) {
+                System.out.println(Thread.currentThread().getName()+" start to respond");
+                socketChannel.write(byteBuffer);
+                byteBuffer.clear();
+                sk.interestOps(SelectionKey.OP_READ);
+                state=RECEIVE;
+            }
+//            sk.cancel();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
-    }
-    void send() throws IOException {
-        socket.write(output);
-        if (outputIsComplete()) sk.cancel();
     }
 }
