@@ -21,42 +21,50 @@ public class MultiThreadHandler implements Runnable {
     int state = RECEIVE;
     static ExecutorService pool= Executors.newFixedThreadPool(4);
 
-    MultiThreadHandler(Selector sel, SocketChannel channel) throws IOException {
+    MultiThreadHandler(Selector workSelector, SocketChannel channel) throws IOException {
+        workSelector.wakeup();
         socketChannel = channel;
-        channel.configureBlocking(false);
+        socketChannel.configureBlocking(false);
         // Optionally try first read now
-        sk = socketChannel.register(sel, 0);
+        sk = socketChannel.register(workSelector, SelectionKey.OP_READ);
         sk.attach(this); //将Handler绑定到SelectionKey上
         sk.interestOps(SelectionKey.OP_READ);
-        sel.wakeup();
     }
 
-    public void run() {
-        pool.execute(()->{
-            try {
-                if (state == RECEIVE){
-                    int length=0;
-                    while ((length=socketChannel.read(byteBuffer))>0) {
-                        System.out.println(Thread.currentThread().getName()+" received: "
-                                +new String(byteBuffer.array(),0,length)+",length="+length);
+    public synchronized void handle() {
+        try {
+            if (state == RECEIVE){
+                int length=0;
+                while ((length=socketChannel.read(byteBuffer))>0) {
+                    System.out.println(Thread.currentThread().getName()+" received: "
+                            +new String(byteBuffer.array(),0,length)+",length="+length);
 
-                    }
-                    byteBuffer.flip();
-
-                    state = WRITING;
-                    // Normally also do first write now
-                    sk.interestOps(SelectionKey.OP_WRITE);
-                }else if (state == WRITING) {
-                    System.out.println(Thread.currentThread().getName()+" start to respond");
-                    socketChannel.write(byteBuffer);
-                    byteBuffer.clear();
-                    sk.interestOps(SelectionKey.OP_READ);
-                    state=RECEIVE;
                 }
-//            sk.cancel();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+                byteBuffer.flip();
+
+                state = WRITING;
+                // Normally also do first write now
+                sk.interestOps(SelectionKey.OP_WRITE);
+            }else if (state == WRITING) {
+                System.out.println(Thread.currentThread().getName()+" start to respond");
+                socketChannel.write(byteBuffer);
+                byteBuffer.clear();
+                state=RECEIVE;;
             }
-        });
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void run(){
+        pool.execute(new AsynTask());
+    }
+
+    class AsynTask implements Runnable{
+
+        @Override
+        public void run() {
+            MultiThreadHandler.this.handle();
+        }
     }
 }
