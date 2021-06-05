@@ -21,34 +21,44 @@ public class MultiThreadHandler implements Runnable {
     int state = RECEIVE;
     static ExecutorService pool= Executors.newFixedThreadPool(4);
 
+
     MultiThreadHandler(Selector workSelector, SocketChannel channel) throws IOException {
         workSelector.wakeup();
         socketChannel = channel;
         socketChannel.configureBlocking(false);
-        // Optionally try first read now
-        sk = socketChannel.register(workSelector, SelectionKey.OP_READ);
-        sk.attach(this); //将Handler绑定到SelectionKey上
-        sk.interestOps(SelectionKey.OP_READ);
+
+        //仅仅取得选择键，后设置感兴趣的IO事件
+        sk = channel.register(workSelector, SelectionKey.OP_READ);
+        System.out.println("work selector is active");
+        //将本Handler作为sk选择键的附件，方便事件dispatch
+        sk.attach(this);
+
+        //向sk选择键注册Read就绪事件
+//        sk.interestOps(SelectionKey.OP_READ);
     }
 
     public synchronized void handle() {
         try {
             if (state == RECEIVE){
-                int length=0;
-                while ((length=socketChannel.read(byteBuffer))>0) {
-                    System.out.println(Thread.currentThread().getName()+" received: "
-                            +new String(byteBuffer.array(),0,length)+",length="+length);
-
+                System.out.println(Thread.currentThread().getName()+" start to reading");
+                //从通道读
+                int length = 0;
+                while ((length = socketChannel.read(byteBuffer)) > 0) {
+                    System.out.println(new String(byteBuffer.array(), 0, length));
                 }
-                byteBuffer.flip();
 
-                state = WRITING;
-                // Normally also do first write now
+                //读完后，准备开始写入通道,byteBuffer切换成读模式
+                byteBuffer.flip();
+                //读完后，注册write就绪事件
                 sk.interestOps(SelectionKey.OP_WRITE);
+                //读完后,进入发送的状态
+                state=WRITING;
             }else if (state == WRITING) {
                 System.out.println(Thread.currentThread().getName()+" start to respond");
                 socketChannel.write(byteBuffer);
                 byteBuffer.clear();
+                //写完后,注册read就绪事件
+                sk.interestOps(SelectionKey.OP_READ);
                 state=RECEIVE;;
             }
         } catch (IOException ex) {
@@ -56,8 +66,13 @@ public class MultiThreadHandler implements Runnable {
         }
     }
 
-    public void run(){
-        pool.execute(new AsynTask());
+    public void run() {
+        pool.execute(this::handle);
+        try {
+            Thread.sleep(200);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     class AsynTask implements Runnable{

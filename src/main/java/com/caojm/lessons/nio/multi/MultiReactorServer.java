@@ -17,37 +17,43 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2021/6/3 下午4:17
  */
 class MultiReactorServer implements Runnable {
-    final Selector[] selectors=new Selector[2];
-    SubReactor[] subReactors;
-
-    final ServerSocketChannel serverSocket;
+    ServerSocketChannel serverSocket;
     AtomicInteger next = new AtomicInteger(0);
-    MultiReactorServer(int port) throws IOException {
-        selectors[0] = Selector.open();
-        selectors[1] = Selector.open();
-        serverSocket=ServerSocketChannel.open();
-        serverSocket.socket().bind(new InetSocketAddress(port));
-        serverSocket.configureBlocking(false);
-        SelectionKey sk = serverSocket.register(selectors[0], SelectionKey.OP_ACCEPT); //注册accept事件
-        sk.attach(new AcceptorHandler()); //调用Acceptor()为回调方法
+    //选择器集合，引入多个选择器
+    Selector[] selectors =null;
+    //引入多个子反应器
+    SubReactor[] subReactors = null;
 
-//        subReactors=new SubReactor[]{new SubReactor(selectors[0]),new SubReactor(selectors[1])};
+    MultiReactorServer () throws IOException {
+        //初始化多个选择器
+        selectors=new Selector[]{Selector.open(),Selector.open()};
+        serverSocket = ServerSocketChannel.open();
+        serverSocket.socket().bind(new InetSocketAddress(8777));
+        //非阻塞
+        serverSocket.configureBlocking(false);
+        //第一个选择器，负责监控新连接事件
+        SelectionKey sk = serverSocket.register(selectors[0], SelectionKey.OP_ACCEPT);
+        //绑定Handler:attach新连接监控handler处理器到SelectionKey（选择键）
+        sk.attach(new AcceptorHandler(sk));
+        //第一个子反应器，一子反应器负责一个选择器
+        subReactors=new SubReactor[]{new SubReactor(selectors[0]),new SubReactor(selectors[1])};
+
     }
 
     @Override
     public void run() {
+        int i=0;
+        for(SubReactor reactor:subReactors){
+            String name="master";
+            if(reactor.selector!=this.selectors[0]){
+                name="worker";
+            }
+            Thread reactorThread = new Thread(reactor,name+"-reactor-"+(i++));
+            reactorThread.start();
+        }
 
-//        int i=0;
-//        for(SubReactor reactor:subReactors){
-//            String name="master";
-//            if(reactor.selector!=this.selectors[0]){
-//                name="worker";
-//            }
-//            Thread reactorThread = new Thread(reactor,name+"-reactor-"+(i++));
-//            reactorThread.start();
-//        }
-        new Thread(new MasterReactor(selectors[0]),"master reactor").start();
-        new Thread(new WorkReactor(selectors[1]),"worker reactor").start();
+//        new Thread(new MasterReactor(selectors[0]),"master reactor").start();
+//        new Thread(new WorkReactor(selectors[1]),"worker reactor").start();
     }
 
     public class SubReactor implements Runnable{
@@ -61,20 +67,24 @@ class MultiReactorServer implements Runnable {
             try {
                 while (!Thread.interrupted()) {//循环
                     System.out.println(Thread.currentThread().getName()+" reactor listening........");
+
                     selector.select();
-                    Set<SelectionKey> selectionKeys = selector.selectedKeys();
-                    Iterator<SelectionKey> it = selectionKeys.iterator();
-                    System.out.println("event count:"+selectionKeys.size());
+                    Set<SelectionKey>keySet = selector.selectedKeys();
+                    if(Thread.currentThread().getName().indexOf("work")>=0){
+                        System.out.println("event count:"+keySet.size());
+                    }
+                    Iterator<SelectionKey> it = keySet.iterator();
                     while (it.hasNext()) {
-                        System.out.println(Thread.currentThread().getName()+" reactor listened an event");
+                        //反应器负责dispatch收到的事件
                         SelectionKey sk = it.next();
-                        Runnable r = (Runnable)(sk.attachment()); //调用SelectionKey绑定的调用对象
-                        if (r != null) {
-                            r.run();
+                        Runnable handler = (Runnable) sk.attachment();
+                        //调用之前attach绑定到选择键的handler处理器对象
+                        if (handler != null) {
+                            handler.run();
                         }
                     }
+                    keySet.clear();
                     System.out.println(Thread.currentThread().getName()+" reactor process over");
-                    selectionKeys.clear();
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -152,12 +162,16 @@ class MultiReactorServer implements Runnable {
 
     // Acceptor 连接处理类
     class AcceptorHandler implements Runnable { // inner
+        SelectionKey selectionKey;
+        AcceptorHandler(SelectionKey selectionKey){
+            this.selectionKey=selectionKey;
+        }
         public void run() {
             try {
-                SocketChannel c = serverSocket.accept();
-                if (c != null) {
+                SocketChannel channel = serverSocket.accept();
+                if (channel != null) {
                     System.out.println(Thread.currentThread().getName()+" accept a connection");
-                    new MultiThreadHandler(selectors[1], c);
+                    new MultiThreadHandler(selectors[1], channel);
                 }
             }
             catch(IOException ex) {
@@ -167,6 +181,6 @@ class MultiReactorServer implements Runnable {
     }
 
     public static void main(String[] args) throws IOException{
-        new Thread(new MultiReactorServer(56678)).start();
+        new MultiReactorServer().run();
     }
 }
