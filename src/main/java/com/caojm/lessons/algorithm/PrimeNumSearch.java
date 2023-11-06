@@ -1,5 +1,8 @@
 package com.caojm.lessons.algorithm;
 
+/**
+ * 统计素数的个数
+ */
 public class PrimeNumSearch {
     public static void main(String[] args) {
         System.out.println(countPrime(17));
